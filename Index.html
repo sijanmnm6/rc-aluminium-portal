@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RC Aluminium - Flexible Payroll</title>
+    <style>
+        :root { --primary: #1e3c72; --secondary: #f39c12; --success: #27ae60; --danger: #e74c3c; --bg: #f4f7f6; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); margin: 0; padding: 0; }
+        .header { background: var(--primary); color: white; padding: 20px; text-align: center; border-bottom: 4px solid var(--secondary); }
+        .container { padding: 15px; max-width: 800px; margin: auto; }
+        .card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        h3 { margin-top: 0; color: var(--primary); border-bottom: 2px solid #f1f1f1; padding-bottom: 10px; font-size: 18px; }
+
+        label { font-weight: bold; display: block; margin-top: 10px; font-size: 13px; color: #555; }
+        input, select { width: 100%; padding: 12px; margin: 5px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; box-sizing: border-box; }
+        
+        .btn-main { width: 100%; padding: 15px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; color: white; margin-top: 10px; }
+        .bg-blue { background: var(--primary); }
+        .bg-green { background: var(--success); }
+        .btn-del { background: var(--danger); padding: 5px 10px; width: auto; font-size: 12px; }
+
+        .scroll { overflow-x: auto; margin-top: 10px; }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; background: white; }
+        th, td { border: 1px solid #eee; padding: 10px; text-align: left; font-size: 14px; }
+        th { background: #f8f9fa; color: var(--primary); }
+        .bank-info { font-size: 11px; color: #2980b9; background: #e8f4fd; padding: 3px 6px; border-radius: 4px; display: inline-block; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>RC ALUMINIUM PVT LTD</h1>
+    <p>Flexible Attendance & Manual OT System</p>
+</div>
+
+<div class="container">
+
+    <div class="card">
+        <h3>👤 Staff Setup (දෛනික වැටුප් සටහන)</h3>
+        <input type="text" id="staffName" placeholder="Staff Name (නම)">
+        <input type="number" id="dailyRate" placeholder="Daily Rate (දිනකට වැටුප)">
+        <div style="display: flex; gap: 5px;">
+            <input type="text" id="bankName" placeholder="Bank (බැංකුව)">
+            <input type="text" id="accNumber" placeholder="Account No">
+        </div>
+        <button class="btn-main bg-blue" onclick="addStaff()">Register Staff (ලියාපදිංචි කරන්න)</button>
+    </div>
+
+    <div class="card">
+        <h3>📍 Daily Entry (පැමිණීම / අතිකාල / අත්තිකාරම්)</h3>
+        <label>Select Staff:</label>
+        <select id="selectStaff"></select>
+
+        <label>Entry Type (වර්ගය):</label>
+        <select id="entryType" onchange="toggleInputs()">
+            <option value="P">Present - Standard Day (පැමිණ ඇත)</option>
+            <option value="OT">Overtime - Manual Amount (අතිකාල දීමනා)</option>
+            <option value="ADV">Advance / Hand-over (අත්තිකාරම්)</option>
+        </select>
+
+        <div id="amountDiv" style="display:none;">
+            <label id="amtLabel">Amount / මුදල:</label>
+            <input type="number" id="entryValue" value="0">
+        </div>
+
+        <label>Method / Location:</label>
+        <select id="payMethod">
+            <option value="Cash">Cash (අතට)</option>
+            <option value="Bank">Bank Deposit (බැංකුවට)</option>
+            <option value="Workshop">Workshop (වැඩපොළ)</option>
+            <option value="Site">Site (වැඩබිම)</option>
+        </select>
+        
+        <button class="btn-main bg-green" onclick="saveEntry()">Save Entry (සුරකින්න)</button>
+    </div>
+
+    <div class="card">
+        <h3>💰 Payout Summary (ගෙවිය යුතු මුදල)</h3>
+        <div class="scroll" id="summaryArea"></div>
+        <button style="background:#666; width:auto; padding:8px 15px; color:white; border-radius:5px; margin-top:10px; border:none;" onclick="clearLogs()">Clear All Logs (සියල්ල මකන්න)</button>
+    </div>
+
+    <div class="card">
+        <h3>📝 History (පෙර සටහන්)</h3>
+        <div class="scroll" id="historyArea"></div>
+    </div>
+
+</div>
+
+<script>
+    let staff = JSON.parse(localStorage.getItem('rc_flex_staff')) || [];
+    let logs = JSON.parse(localStorage.getItem('rc_flex_logs')) || [];
+
+    function toggleInputs() {
+        const type = document.getElementById('entryType').value;
+        document.getElementById('amountDiv').style.display = (type === 'P') ? 'none' : 'block';
+    }
+
+    function addStaff() {
+        const name = document.getElementById('staffName').value;
+        const rate = document.getElementById('dailyRate').value;
+        const bank = document.getElementById('bankName').value;
+        const acc = document.getElementById('accNumber').value;
+        if(!name || !rate) return alert("Name and Daily Rate required!");
+        staff.push({ id: Date.now(), name, rate: parseFloat(rate), bank, acc });
+        updateData();
+        location.reload();
+    }
+
+    function saveEntry() {
+        const staffId = document.getElementById('selectStaff').value;
+        if(!staffId) return alert("Select Staff!");
+        const type = document.getElementById('entryType').value;
+        const val = parseFloat(document.getElementById('entryValue').value) || 0;
+        const method = document.getElementById('payMethod').value;
+        const date = new Date().toLocaleDateString();
+
+        logs.push({ logId: Date.now(), staffId, type, val, method, date });
+        updateData();
+        alert("Saved!");
+    }
+
+    function deleteLog(id) {
+        if(confirm("Remove this entry?")) {
+            logs = logs.filter(l => l.logId !== id);
+            updateData();
+        }
+    }
+
+    function clearLogs() {
+        if(confirm("This will clear all attendance and payment history. Continue?")) {
+            logs = [];
+            updateData();
+        }
+    }
+
+    function updateData() {
+        localStorage.setItem('rc_flex_staff', JSON.stringify(staff));
+        localStorage.setItem('rc_flex_logs', JSON.stringify(logs));
+        renderUI();
+    }
+
+    function renderUI() {
+        const select = document.getElementById('selectStaff');
+        select.innerHTML = staff.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+
+        // Summary Calculation
+        let sumHtml = `<table><tr><th>Staff</th><th>Work Days</th><th>Total OT</th><th>Advances</th><th>Total Pay</th></tr>`;
+        staff.forEach(s => {
+            const sLogs = logs.filter(l => l.staffId == s.id);
+            const daysCount = sLogs.filter(l => l.type === 'P').length;
+            const totalOT = sLogs.filter(l => l.type === 'OT').reduce((a, b) => a + b.val, 0);
+            const totalAdv = sLogs.filter(l => l.type === 'ADV').reduce((a, b) => a + b.val, 0);
+            
+            const netPay = (daysCount * s.rate) + totalOT - totalAdv;
+
+            sumHtml += `<tr>
+                <td><b>${s.name}</b><br><span class="bank-info">${s.bank || 'No Bank'} - ${s.acc || ''}</span></td>
+                <td>${daysCount} (×${s.rate})</td>
+                <td style="color:green">+${totalOT}</td>
+                <td style="color:red">-${totalAdv}</td>
+                <td><b style="font-size:16px">${netPay.toLocaleString()}</b></td>
+            </tr>`;
+        });
+        document.getElementById('summaryArea').innerHTML = sumHtml + `</table>`;
+
+        // History
+        let histHtml = `<table><tr><th>Date</th><th>Staff</th><th>Type</th><th>Value</th><th>Action</th></tr>`;
+        logs.slice().reverse().slice(0, 10).forEach(l => {
+            const sn = staff.find(st => st.id == l.staffId)?.name || 'Unknown';
+            histHtml += `<tr><td>${l.date}</td><td>${sn}</td><td>${l.type}</td><td>${l.val || '-'}</td>
+            <td><button class="btn-del" onclick="deleteLog(${l.logId})">Remove</button></td></tr>`;
+        });
+        document.getElementById('historyArea').innerHTML = histHtml + `</table>`;
+    }
+
+    renderUI();
+</script>
+</body>
+</html>
