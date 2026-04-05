@@ -3,179 +3,274 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RC Aluminium - Flexible Payroll</title>
+    <title>RC Aluminium Pvt Ltd - Master Portal</title>
     <style>
-        :root { --primary: #1e3c72; --secondary: #f39c12; --success: #27ae60; --danger: #e74c3c; --bg: #f4f7f6; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); margin: 0; padding: 0; }
-        .header { background: var(--primary); color: white; padding: 20px; text-align: center; border-bottom: 4px solid var(--secondary); }
-        .container { padding: 15px; max-width: 800px; margin: auto; }
-        .card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        h3 { margin-top: 0; color: var(--primary); border-bottom: 2px solid #f1f1f1; padding-bottom: 10px; font-size: 18px; }
-
-        label { font-weight: bold; display: block; margin-top: 10px; font-size: 13px; color: #555; }
-        input, select { width: 100%; padding: 12px; margin: 5px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; box-sizing: border-box; }
+        :root { --primary: #002d5b; --secondary: #f39c12; --success: #27ae60; --danger: #e74c3c; --info: #3498db; --bg: #f4f7f6; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; }
+        .header { background: var(--primary); color: white; padding: 25px 15px; text-align: center; border-bottom: 5px solid var(--secondary); box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        .container { padding: 15px; max-width: 1000px; margin: auto; }
+        .card { background: white; padding: 20px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 4px solid var(--primary); }
+        h3 { margin-top: 0; color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
         
-        .btn-main { width: 100%; padding: 15px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; color: white; margin-top: 10px; }
-        .bg-blue { background: var(--primary); }
-        .bg-green { background: var(--success); }
-        .btn-del { background: var(--danger); padding: 5px 10px; width: auto; font-size: 12px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        label { font-weight: bold; display: block; margin-top: 12px; font-size: 13px; color: #555; }
+        input, select { width: 100%; padding: 12px; margin: 6px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; box-sizing: border-box; transition: 0.3s; }
+        input:focus { border-color: var(--secondary); outline: none; background: #fffdf9; }
+        
+        .btn { width: 100%; padding: 15px; margin-top: 15px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; color: white; transition: 0.2s; }
+        .btn-reg { background: var(--primary); }
+        .btn-in { background: var(--success); }
+        .btn-out { background: var(--secondary); }
+        .btn-save { background: var(--info); }
+        .btn-del { background: var(--danger); width: auto; padding: 5px 10px; font-size: 11px; margin: 0; }
+        .btn:active { transform: scale(0.98); }
 
-        .scroll { overflow-x: auto; margin-top: 10px; }
-        table { width: 100%; border-collapse: collapse; min-width: 600px; background: white; }
-        th, td { border: 1px solid #eee; padding: 10px; text-align: left; font-size: 14px; }
-        th { background: #f8f9fa; color: var(--primary); }
-        .bank-info { font-size: 11px; color: #2980b9; background: #e8f4fd; padding: 3px 6px; border-radius: 4px; display: inline-block; }
+        .scroll { overflow-x: auto; margin-top: 15px; border-radius: 8px; border: 1px solid #eee; }
+        table { width: 100%; border-collapse: collapse; min-width: 850px; background: white; }
+        th, td { border-bottom: 1px solid #eee; padding: 12px; text-align: left; font-size: 14px; }
+        th { background: #f8f9fa; color: var(--primary); font-weight: bold; }
+        tr:hover { background: #fdfdfd; }
+        
+        .bank-info { font-size: 11px; color: #2980b9; background: #e8f4fd; padding: 6px; border-radius: 6px; margin-top: 6px; border-left: 3px solid var(--info); }
+        .badge { padding: 4px 8px; border-radius: 5px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .bg-in { background: #d4edda; color: #155724; }
+        .bg-out { background: #fff3cd; color: #856404; }
+        .footer-btns { display: flex; gap: 10px; margin-top: 20px; }
     </style>
 </head>
 <body>
 
 <div class="header">
     <h1>RC ALUMINIUM PVT LTD</h1>
-    <p>Flexible Attendance & Manual OT System</p>
+    <p>Staff Master Portal: Attendance, Banking & Payroll</p>
 </div>
 
 <div class="container">
 
     <div class="card">
-        <h3>👤 Staff Setup (දෛනික වැටුප් සටහන)</h3>
-        <input type="text" id="staffName" placeholder="Staff Name (නම)">
-        <input type="number" id="dailyRate" placeholder="Daily Rate (දිනකට වැටුප)">
-        <div style="display: flex; gap: 5px;">
-            <input type="text" id="bankName" placeholder="Bank (බැංකුව)">
-            <input type="text" id="accNumber" placeholder="Account No">
-        </div>
-        <button class="btn-main bg-blue" onclick="addStaff()">Register Staff (ලියාපදිංචි කරන්න)</button>
-    </div>
-
-    <div class="card">
-        <h3>📍 Daily Entry (පැමිණීම / අතිකාල / අත්තිකාරම්)</h3>
-        <label>Select Staff:</label>
-        <select id="selectStaff"></select>
-
-        <label>Entry Type (වර්ගය):</label>
-        <select id="entryType" onchange="toggleInputs()">
-            <option value="P">Present - Standard Day (පැමිණ ඇත)</option>
-            <option value="OT">Overtime - Manual Amount (අතිකාල දීමනා)</option>
-            <option value="ADV">Advance / Hand-over (අත්තිකාරම්)</option>
-        </select>
-
-        <div id="amountDiv" style="display:none;">
-            <label id="amtLabel">Amount / මුදල:</label>
-            <input type="number" id="entryValue" value="0">
-        </div>
-
-        <label>Method / Location:</label>
-        <select id="payMethod">
-            <option value="Cash">Cash (අතට)</option>
-            <option value="Bank">Bank Deposit (බැංකුවට)</option>
-            <option value="Workshop">Workshop (වැඩපොළ)</option>
-            <option value="Site">Site (වැඩබිම)</option>
-        </select>
+        <h3>👤 Staff Registration (සේවක ලියාපදිංචිය)</h3>
+        <label>Full Name / නම:</label>
+        <input type="text" id="name" placeholder="Ex: Kamal Silva">
         
-        <button class="btn-main bg-green" onclick="saveEntry()">Save Entry (සුරකින්න)</button>
+        <div class="form-grid">
+            <div>
+                <label>NIC Number / හැඳුනුම්පත් අංකය:</label>
+                <input type="text" id="nic" placeholder="NIC No">
+            </div>
+            <div>
+                <label>Mobile / දුරකථන අංකය:</label>
+                <input type="number" id="mobile" placeholder="07XXXXXXXX">
+            </div>
+        </div>
+
+        <label>Daily Rate / දිනක වැටුප (LKR):</label>
+        <input type="number" id="rate" placeholder="Amount per day">
+
+        <div class="form-grid">
+            <div>
+                <label>Bank Name / බැංකුව:</label>
+                <input type="text" id="bank" placeholder="Ex: BOC / HNB">
+            </div>
+            <div>
+                <label>Branch / ශාඛාව:</label>
+                <input type="text" id="branch" placeholder="Branch Name">
+            </div>
+        </div>
+        
+        <label>Account Number / ගිණුම් අංකය:</label>
+        <input type="text" id="acc" placeholder="Account Number">
+        
+        <button class="btn btn-reg" onclick="addStaff()">Register Staff (ලියාපදිංචි කරන්න)</button>
     </div>
 
     <div class="card">
-        <h3>💰 Payout Summary (ගෙවිය යුතු මුදල)</h3>
-        <div class="scroll" id="summaryArea"></div>
-        <button style="background:#666; width:auto; padding:8px 15px; color:white; border-radius:5px; margin-top:10px; border:none;" onclick="clearLogs()">Clear All Logs (සියල්ල මකන්න)</button>
+        <h3>📍 Daily Log & Payments (දෛනික සටහන්)</h3>
+        <label>Select Staff / සේවකයා තෝරන්න:</label>
+        <select id="staffSelect"></select>
+
+        <div class="form-grid">
+            <button class="btn btn-in" onclick="punch('IN')">Clock IN (පැමිණීම)</button>
+            <button class="btn btn-out" onclick="punch('OUT')">Clock OUT (පිටවීම)</button>
+        </div>
+
+        <label>Other Entry Type / වෙනත් වර්ගය:</label>
+        <select id="logType" onchange="toggleVal()">
+            <option value="">-- Select for OT or Advance --</option>
+            <option value="OT">Manual OT (අතිකාල දීමනා)</option>
+            <option value="ADV">Advance (අත්තිකාරම්)</option>
+        </select>
+
+        <div id="valDiv" style="display:none;">
+            <label>Amount / මුදල:</label>
+            <input type="number" id="logVal" value="0">
+            <button class="btn btn-save" onclick="saveManualEntry()">Save OT/Advance (සුරකින්න)</button>
+        </div>
     </div>
 
     <div class="card">
-        <h3>📝 History (පෙර සටහන්)</h3>
+        <h3>💰 Payroll Summary (වැටුප් වාර්තාව)</h3>
+        <div class="scroll" id="payoutArea"></div>
+    </div>
+
+    <div class="card">
+        <h3>📝 Recent History (පෙර සටහන්)</h3>
         <div class="scroll" id="historyArea"></div>
+        
+        <div class="footer-btns">
+            <button class="btn" style="background:#6c757d;" onclick="exportCSV()">Export to Excel</button>
+            <button class="btn" style="background:#444;" onclick="backupData()">Backup Data</button>
+            <button class="btn" style="background:#e74c3c;" onclick="clearAll()">Clear All</button>
+        </div>
     </div>
 
 </div>
 
 <script>
-    let staff = JSON.parse(localStorage.getItem('rc_flex_staff')) || [];
-    let logs = JSON.parse(localStorage.getItem('rc_flex_logs')) || [];
+    let staff = JSON.parse(localStorage.getItem('rc_master_staff')) || [];
+    let logs = JSON.parse(localStorage.getItem('rc_master_logs')) || [];
 
-    function toggleInputs() {
-        const type = document.getElementById('entryType').value;
-        document.getElementById('amountDiv').style.display = (type === 'P') ? 'none' : 'block';
+    function toggleVal() {
+        const type = document.getElementById('logType').value;
+        document.getElementById('valDiv').style.display = (type === 'OT' || type === 'ADV') ? 'block' : 'none';
     }
 
     function addStaff() {
-        const name = document.getElementById('staffName').value;
-        const rate = document.getElementById('dailyRate').value;
-        const bank = document.getElementById('bankName').value;
-        const acc = document.getElementById('accNumber').value;
-        if(!name || !rate) return alert("Name and Daily Rate required!");
-        staff.push({ id: Date.now(), name, rate: parseFloat(rate), bank, acc });
-        updateData();
-        location.reload();
+        const data = {
+            id: Date.now(),
+            name: document.getElementById('name').value,
+            nic: document.getElementById('nic').value,
+            mobile: document.getElementById('mobile').value,
+            rate: parseFloat(document.getElementById('rate').value),
+            bank: document.getElementById('bank').value,
+            branch: document.getElementById('branch').value,
+            acc: document.getElementById('acc').value
+        };
+        if(!data.name || !data.rate) return alert("Please enter Name and Daily Rate!");
+        staff.push(data);
+        saveRefresh();
+        alert("Staff Registered!");
     }
 
-    function saveEntry() {
-        const staffId = document.getElementById('selectStaff').value;
-        if(!staffId) return alert("Select Staff!");
-        const type = document.getElementById('entryType').value;
-        const val = parseFloat(document.getElementById('entryValue').value) || 0;
-        const method = document.getElementById('payMethod').value;
-        const date = new Date().toLocaleDateString();
+    function punch(type) {
+        const sId = document.getElementById('staffSelect').value;
+        if(!sId) return alert("Select staff!");
+        const now = new Date();
+        logs.push({
+            logId: Date.now(),
+            sId: sId,
+            type: type,
+            val: 0,
+            date: now.toLocaleDateString(),
+            time: now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+        });
+        saveRefresh();
+        alert(type + " recorded!");
+    }
 
-        logs.push({ logId: Date.now(), staffId, type, val, method, date });
-        updateData();
-        alert("Saved!");
+    function saveManualEntry() {
+        const sId = document.getElementById('staffSelect').value;
+        const type = document.getElementById('logType').value;
+        const val = parseFloat(document.getElementById('logVal').value) || 0;
+        if(!sId || !type) return alert("Select staff and type!");
+        
+        logs.push({
+            logId: Date.now(),
+            sId: sId,
+            type: type,
+            val: val,
+            date: new Date().toLocaleDateString(),
+            time: new Date().toLocaleTimeString()
+        });
+        saveRefresh();
+        alert("Record Saved!");
     }
 
     function deleteLog(id) {
         if(confirm("Remove this entry?")) {
             logs = logs.filter(l => l.logId !== id);
-            updateData();
+            saveRefresh();
         }
     }
 
-    function clearLogs() {
-        if(confirm("This will clear all attendance and payment history. Continue?")) {
-            logs = [];
-            updateData();
-        }
+    function saveRefresh() {
+        localStorage.setItem('rc_master_staff', JSON.stringify(staff));
+        localStorage.setItem('rc_master_logs', JSON.stringify(logs));
+        render();
     }
 
-    function updateData() {
-        localStorage.setItem('rc_flex_staff', JSON.stringify(staff));
-        localStorage.setItem('rc_flex_logs', JSON.stringify(logs));
-        renderUI();
-    }
-
-    function renderUI() {
-        const select = document.getElementById('selectStaff');
+    function render() {
+        const select = document.getElementById('staffSelect');
         select.innerHTML = staff.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
 
-        // Summary Calculation
-        let sumHtml = `<table><tr><th>Staff</th><th>Work Days</th><th>Total OT</th><th>Advances</th><th>Total Pay</th></tr>`;
+        // Payout Summary
+        let pTable = `<table><tr><th>Staff & Banking</th><th>Work Days</th><th>Total OT</th><th>Advances</th><th>Net Pay</th></tr>`;
         staff.forEach(s => {
-            const sLogs = logs.filter(l => l.staffId == s.id);
-            const daysCount = sLogs.filter(l => l.type === 'P').length;
-            const totalOT = sLogs.filter(l => l.type === 'OT').reduce((a, b) => a + b.val, 0);
-            const totalAdv = sLogs.filter(l => l.type === 'ADV').reduce((a, b) => a + b.val, 0);
-            
-            const netPay = (daysCount * s.rate) + totalOT - totalAdv;
+            const sLogs = logs.filter(l => l.sId == s.id);
+            const days = sLogs.filter(l => l.type === 'IN').length;
+            const ot = sLogs.filter(l => l.type === 'OT').reduce((a,b) => a + b.val, 0);
+            const adv = sLogs.filter(l => l.type === 'ADV').reduce((a,b) => a + b.val, 0);
+            const net = (days * s.rate) + ot - adv;
 
-            sumHtml += `<tr>
-                <td><b>${s.name}</b><br><span class="bank-info">${s.bank || 'No Bank'} - ${s.acc || ''}</span></td>
-                <td>${daysCount} (×${s.rate})</td>
-                <td style="color:green">+${totalOT}</td>
-                <td style="color:red">-${totalAdv}</td>
-                <td><b style="font-size:16px">${netPay.toLocaleString()}</b></td>
+            pTable += `<tr>
+                <td><b>${s.name}</b><br><small>NIC: ${s.nic}</small>
+                    <div class="bank-info">${s.bank} (${s.branch})<br>Acc: ${s.acc}</div>
+                </td>
+                <td>${days} days</td>
+                <td style="color:green">+${ot.toLocaleString()}</td>
+                <td style="color:red">-${adv.toLocaleString()}</td>
+                <td><b style="font-size:16px">${net.toLocaleString()}</b></td>
             </tr>`;
         });
-        document.getElementById('summaryArea').innerHTML = sumHtml + `</table>`;
+        document.getElementById('payoutArea').innerHTML = pTable + `</table>`;
 
         // History
-        let histHtml = `<table><tr><th>Date</th><th>Staff</th><th>Type</th><th>Value</th><th>Action</th></tr>`;
-        logs.slice().reverse().slice(0, 10).forEach(l => {
-            const sn = staff.find(st => st.id == l.staffId)?.name || 'Unknown';
-            histHtml += `<tr><td>${l.date}</td><td>${sn}</td><td>${l.type}</td><td>${l.val || '-'}</td>
-            <td><button class="btn-del" onclick="deleteLog(${l.logId})">Remove</button></td></tr>`;
+        let hTable = `<table><tr><th>Date</th><th>Name</th><th>Event</th><th>Time/Value</th><th>Action</th></tr>`;
+        logs.slice().reverse().slice(0, 15).forEach(l => {
+            const s = staff.find(st => st.id == l.sId);
+            const displayVal = (l.type === 'OT' || l.type === 'ADV') ? 'Rs.' + l.val : l.time;
+            hTable += `<tr>
+                <td>${l.date}</td>
+                <td>${s ? s.name : 'Unknown'}</td>
+                <td><span class="badge ${l.type === 'IN' ? 'bg-in' : 'bg-out'}">${l.type}</span></td>
+                <td>${displayVal}</td>
+                <td><button class="btn-del" onclick="deleteLog(${l.logId})">Remove</button></td>
+            </tr>`;
         });
-        document.getElementById('historyArea').innerHTML = histHtml + `</table>`;
+        document.getElementById('historyArea').innerHTML = hTable + `</table>`;
     }
 
-    renderUI();
+    function exportCSV() {
+        let csv = "Date,Staff Name,Event,Value/Time\n";
+        logs.forEach(l => {
+            const s = staff.find(st => st.id == l.sId);
+            csv += `${l.date},${s ? s.name : ''},${l.type},${l.type === 'OT' || l.type === 'ADV' ? l.val : l.time}\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'RC_Aluminium_Staff_Report.csv';
+        a.click();
+    }
+
+    function backupData() {
+        const data = JSON.stringify({ staff, logs });
+        const blob = new Blob([data], { type: 'application/json' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'RC_Backup_' + new Date().toLocaleDateString() + '.json';
+        a.click();
+    }
+
+    function clearAll() {
+        if(confirm("DANGER: This will delete ALL records forever. Are you sure?")) {
+            localStorage.clear();
+            location.reload();
+        }
+    }
+
+    render();
 </script>
 </body>
 </html>
